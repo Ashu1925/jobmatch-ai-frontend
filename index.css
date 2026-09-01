@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@keyframes entry-logo {
+  0% { opacity: 0; transform: scale(.45) rotate(-18deg); }
+  60% { opacity: 1; transform: scale(1.08) rotate(4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes entry-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes entry-progress {
+  from { transform: translateX(-105%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes entry-orbit {
+  from { transform: translate3d(-10%, -8%, 0) rotate(0deg); }
+  to { transform: translate3d(15%, 12%, 0) rotate(360deg); }
+}
+
+.entry-screen { animation: entry-fade-up .35s ease-out both; }
+.entry-logo { animation: entry-logo .7s cubic-bezier(.2,.85,.25,1.25) .08s both; }
+.entry-title { animation: entry-fade-up .5s ease-out .38s both; }
+.entry-subtitle { animation: entry-fade-up .5s ease-out .5s both; }
+.entry-progress { animation: entry-fade-up .4s ease-out .64s both; }
+.entry-progress-bar { animation: entry-progress .75s cubic-bezier(.35,.9,.35,1) .68s both; }
+.entry-orb { position: absolute; border-radius: 9999px; filter: blur(10px); opacity: .45; animation: entry-orbit 12s linear infinite alternate; }
+.entry-orb-one { height: 25rem; width: 25rem; background: #2563eb; top: -12rem; left: -9rem; }
+.entry-orb-two { height: 22rem; width: 22rem; background: #7c3aed; bottom: -12rem; right: -8rem; animation-direction: alternate-reverse; animation-duration: 15s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-screen, .entry-logo, .entry-title, .entry-subtitle, .entry-progress, .entry-progress-bar, .entry-orb { animation: none; }
+}
