@@ -67,6 +67,20 @@ function App(){
         setTrackedJobs((currentJobs) => [{ ...savedJob, id: String(savedJob.id), savedAt: savedJob.createdAt }, ...currentJobs]);
         setTrackerError("");
         setActivePage("My jobs");
+
+        try {
+            const settings = JSON.parse(localStorage.getItem("jobSettings") ?? "{}") as { email?: string; emailNotifications?: boolean; matchThreshold?: number };
+            const threshold = settings.matchThreshold ?? 80;
+            if (settings.emailNotifications && settings.email && (job.matchScore ?? 0) >= threshold) {
+                await fetch(`${API_BASE}/notifications/job-alert`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: settings.email, ...job }),
+                });
+            }
+        } catch {
+            // A notification failure must never prevent the job from being tracked.
+        }
     }
 
     async function updateJobStatus(id: string, status: ApplicationStatus) {
