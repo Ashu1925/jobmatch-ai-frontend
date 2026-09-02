@@ -17,6 +17,8 @@ const defaultSettings: JobSettings = {
   autoApplyEnabled: false,
 };
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080/api";
+
 function SettingsPage() {
   const [settings, setSettings] = useState<JobSettings>(() => {
     try {
@@ -26,11 +28,31 @@ function SettingsPage() {
     }
   });
   const [saved, setSaved] = useState(false);
+  const [testStatus, setTestStatus] = useState("");
 
   function saveSettings() {
     localStorage.setItem("jobSettings", JSON.stringify(settings));
     setSaved(true);
     window.setTimeout(() => setSaved(false), 3000);
+  }
+
+  async function sendTestEmail() {
+    if (!settings.email) {
+      setTestStatus("Enter your notification email first.");
+      return;
+    }
+
+    setTestStatus("Sending test email...");
+    try {
+      const response = await fetch(`${API_BASE}/notifications/test-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: settings.email }),
+      });
+      setTestStatus(response.ok ? "Test email sent. Check your inbox." : "Email could not be sent. Check the server settings.");
+    } catch {
+      setTestStatus("Email service is unavailable right now.");
+    }
   }
 
   return (
@@ -65,6 +87,10 @@ function SettingsPage() {
                 Email me about strong matches
                 <input type="checkbox" checked={settings.emailNotifications} onChange={(event) => setSettings({ ...settings, emailNotifications: event.target.checked })} className="h-4 w-4 accent-blue-600" />
               </label>
+              <button type="button" onClick={sendTestEmail} className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 transition hover:bg-blue-100">
+                Send test email
+              </button>
+              {testStatus && <p className="mt-3 text-sm font-semibold text-slate-600">{testStatus}</p>}
             </div>
           </div>
         </div>
